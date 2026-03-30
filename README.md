@@ -47,6 +47,25 @@ python scanner.py --image images/test_receipt.jpg --output output/scan.png
 3. **Birds-Eye Perspective Mapping**: The coordinates of the quadrilateral are fed into `extract_birdseye_view()`, which computes a homographic matrix to "stretch and flatten" the angled document into a perfect, top-down orthogonal frame.
 4. **Adaptive Image Enhancement**: Instead of relying heavily on standard Gaussian thresholding which struggles with lighting gradients, the system utilizes CLAHE coupled with local blocked thresholding to recreate a flawless "scanned ink" aesthetic.
 
+### Architecture Flowchart
+
+```mermaid
+flowchart TD
+    A[Raw Image Input] --> B[Load & Scale]
+    B --> C[Convert to Grayscale & Gaussian Blur]
+    C --> D[Canny Edge Detection]
+    D --> E[Extract & Sort Contours by Area]
+    E --> F{Polygon Approximation:\nIs it a Quadrilateral?}
+    F -- Yes (4 Points) --> G[Reorder Corner Coordinates]
+    G --> H[Calculate Perspective Homography Matrix]
+    H --> I[Warp to Top-Down View]
+    F -- No --> J[Fallback: Use Original Original Outline]
+    J --> K
+    I --> K[Apply CLAHE Contrast Optimizer]
+    K --> L[Local Blocked Thresholding]
+    L --> M[Export Native PNG & High-Res PDF]
+```
+
 ## 📁 Repository Structure
 * `scanner.py` - Core CLI routing and pipeline execution (contains `DocumentProcessor`).
 * `transform.py` - Contains the foundational math utility functions for reordering coordinate grids and performing perspective projections.
