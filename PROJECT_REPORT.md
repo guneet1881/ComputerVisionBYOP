@@ -1,6 +1,9 @@
 # Computer Vision Bring-Your-Own-Project (BYOP) Report
+
 **Project Title**: Intelligent Document Digitization Pipeline
-**Author**: Guneet 
+**Name**: Guneet Kaur Juneja
+**Registration Number**: 23BAI10720
+**Subject**: Computer Vision
 
 ## 1. The Problem and Why It Matters
 
