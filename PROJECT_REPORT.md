@@ -16,6 +16,26 @@ Simply storing these raw photographs is inefficient and detrimental to further d
 To solve this, I designed a fully automated Computer Vision pipeline utilizing OpenCV and Python. The goal was to build a system that takes an angled, poorly-lit photograph and programmatically morphs it into a clean, top-down scan.
 
 My approach was broken down into a structured pipeline:
+
+### System Architecture Flow
+
+```mermaid
+flowchart TD
+    A[Raw Image Input] --> B[Load & Scale]
+    B --> C[Convert to Grayscale & Gaussian Blur]
+    C --> D[Canny Edge Detection]
+    D --> E[Extract & Sort Contours by Area]
+    E --> F{Polygon Approximation:\nIs it a Quadrilateral?}
+    F -- Yes (4 Points) --> G[Reorder Corner Coordinates]
+    G --> H[Calculate Perspective Homography Matrix]
+    H --> I[Warp to Top-Down View]
+    F -- No --> J[Fallback: Use Original Outline]
+    J --> K
+    I --> K[Apply CLAHE Contrast Optimizer]
+    K --> L[Local Blocked Thresholding]
+    L --> M[Export Native PNG & High-Res PDF]
+```
+
 1. **Pre-processing**: The image is reduced to grayscale and softened via a Gaussian blur to eliminate micro-noise that might confuse edge detectors.
 2. **Edge Mapping**: A Canny Edge Detector isolates the sharp gradients, primarily the edges of the white paper against a darker background.
 3. **Contour Extraction**: The system finds raw polygonal shapes, sorts them by area, and mathematically approximates their perimeters. The largest contour with exactly four vertices is assumed to be the document bounds.
