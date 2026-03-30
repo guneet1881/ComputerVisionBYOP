@@ -1,30 +1,57 @@
-# Smart Document Scanner
+# 📄 Intelligent Document Digitization Pipeline
 
-This is an OpenCV-based pipeline for finding, cropping, and enhancing documents (e.g., notes, receipts) in photos to resemble a top-down document scan.
+![Python](https://img.shields.io/badge/Python-3.x-blue.svg)
+![OpenCV](https://img.shields.io/badge/OpenCV-4.x-green.svg)
+![Build](https://img.shields.io/badge/Build-Passing-brightgreen.svg)
 
-## Requirements
-Ensure you have Python 3 installed. Install the dependencies using:
+An advanced, Object-Oriented Computer Vision pipeline that automatically detects, extracts, perspective-warps, and enhances documents from raw photographs. It converts skewed, badly-lit photos of receipts, notes, or documents into clean, flat, high-contrast, universally formatted `.pdf`s and `.png`s.
+
+## ✨ Key Features
+
+- **Adaptive Perspective Transformations**: Automatically locates the mathematical bounds of a paper document and straightens it out using Homography geometry.
+- **Advanced CLAHE Contrast Fixes**: Implements *Contrast Limited Adaptive Histogram Equalization* to actively eliminate background shadows before thresholding.
+- **Dual Export Options**: Extracts both a native snapshot (`.png`) and fully formatted Portable Document (`.pdf`).
+- **Object-Oriented Architecture**: Built using a robust, easily-extensible `DocumentProcessor` class pattern.
+
+## ⚙️ Installation
+
+You will need Python 3 installed. It is recommended to use a virtual environment.
 
 ```bash
+# Clone the repository
+git clone https://github.com/guneet1881/ComputerVisionBYOP.git
+cd ComputerVisionBYOP
+
+# Install Required Dependencies
 pip install -r requirements.txt
 ```
 
-## Usage
+## 🚀 Usage
 
-This project is completely CLI-driven. You can run the following command to scan an image:
+This project is entirely Command-Line-Interface (CLI) driven. Simply provide the path to the raw photo, and specify where you want the scan to be saved.
 
 ```bash
-python scanner.py --image <path_to_image> --output <path_to_save_output.png>
+python scanner.py --image <path_to_image> --output <path_to_save_directory/output.png>
 ```
 
-**Example:**
+**Example Run:**
 ```bash
-python scanner.py --image images/receipt.jpg --output processed/scan.png
+python scanner.py --image images/test_receipt.jpg --output output/scan.png
 ```
+*(The script will automatically generate an `scan.pdf` alongside your `.png` in the output directory!)*
 
-## How it works
+## 🧠 How the Computer Vision Pipeline Works
 
-1. **Edge Detection:** The image is converted to grayscale, blurred slightly to remove noise, and passed through a Canny Edge Detector.
-2. **Contour Finding:** We find contours (curves) in the edge map. We sort them by area and assume the largest contour with exactly 4 points is our document.
-3. **Perspective Transformation:** We use OpenCV's perspective functions to perform a "homography", mapping the angled document to a flat top-down view.
-4. **Enhancement:** The image is thresholded to look like a black-and-white scan.
+1. **Pre-Processing & Edge Mapping**: The system loads the unaligned image into memory, squashes the color-space to monochrome, and scrubs micro-grit using Gaussian blurring. It then applies a Canny edge detector to trace geometric ridges.
+2. **Boundary Tracing**: Contour algorithms isolate candidate shapes by tracing the active edge map. We sort by geometric area and mathematically approximate bounding vertices until a pure 4-point quadrilateral (the document corners) is isolated.
+3. **Birds-Eye Perspective Mapping**: The coordinates of the quadrilateral are fed into `extract_birdseye_view()`, which computes a homographic matrix to "stretch and flatten" the angled document into a perfect, top-down orthogonal frame.
+4. **Adaptive Image Enhancement**: Instead of relying heavily on standard Gaussian thresholding which struggles with lighting gradients, the system utilizes CLAHE coupled with local blocked thresholding to recreate a flawless "scanned ink" aesthetic.
+
+## 📁 Repository Structure
+* `scanner.py` - Core CLI routing and pipeline execution (contains `DocumentProcessor`).
+* `transform.py` - Contains the foundational math utility functions for reordering coordinate grids and performing perspective projections.
+* `images/` - Directory for test dataset photos.
+* `output/` - Target trajectory for finished digitizations.
+
+---
+*Created for a Computer Vision Bring-Your-Own-Project (BYOP) assignment.*
